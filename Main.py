@@ -8,7 +8,7 @@ from Stopwatch import Stopwatch
 from Network import Network
 
 # file names
-dir_work = 'C:\\Users\\George\\Documents\\Visual Studio Code\\cnn\\working' # working directory
+dir_work = 'C:\\Users\\georg\\Documents\\Visual Studio Code\\cnn\\working' # working directory
 nn_in_fn = 'nn_in.json' # name of input network file
 nn_out_fn = 'nn_out.json' # name of output network file
 
