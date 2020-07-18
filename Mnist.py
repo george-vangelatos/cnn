@@ -25,6 +25,7 @@ class Mnist(): # provides access to MNIST data
 
         # load in labels and close file
         self.labels = np.array(bytearray(f.read(self.num)))
+        self.nc = 10 # set the number of classes (ie there are 10 digits to classify)
         f.close 
 
     def __ReadInt(self, f, *allowed): # reads in integer from file f and returns it; checks integer is an allowed value

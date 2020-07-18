@@ -15,7 +15,7 @@ nn_out_fn = 'nn_out.json' # name of output network file
 # load training and testing datasets; setup correct output vectors (y_values)
 mnist_tr = Mnist(os.path.join(dir_work, 'mnist\\train-images-idx3-ubyte.gz'), os.path.join(dir_work, 'mnist\\train-labels-idx1-ubyte.gz'))
 mnist_te = Mnist(os.path.join(dir_work, 'mnist\\t10k-images-idx3-ubyte.gz'), os.path.join(dir_work, 'mnist\\t10k-labels-idx1-ubyte.gz'))
-y_values = np.identity(10) # identity matrix is equivalent to the correct output vectors for the network (indexed by digit)
+y_values = np.identity(mnist_tr.nc) # identity matrix is equivalent to the correct output vectors for the network (indexed by digit)
 
 # hyper-parameters
 params = tr_params(0.05, 0.0001, 0.25) # eta = learning rate, L2 = regularisation parameter, mu = momentum parameter

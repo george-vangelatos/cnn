@@ -5,9 +5,9 @@ import ActFunc
 
 class FullConLayer(Layer): # fully connected layer of neurons
     def __init__(self, size, af, params, prev):
-        super().__init__((size,), af, prev) # call base initialiser
+        super().__init__(size, af, prev) # call base initialiser
         self._w = Weights((prev._size, size), af.sigma(prev._size), params) # initialise weights
-        self._b = Biases((size,), params) # initialise biases
+        self._b = Biases((1, size), params) # initialise biases
 
     # feeds input x forward through the network; returns ultimate activations; flag specifies whether training or not; 
     # activations are stored if training

@@ -33,7 +33,7 @@ class Layer(): # abstract class for a layer of neurons; derived classes must typ
         self._prev.BackProp(dx) # back-propagate cost derivative wrt to inputs (= activations of previous layer)
 
     # calculates cost derivatives wrt weighted inputs given those wrt activations using current layer activations
-    def _CalcDz(self, da): return np.multiply(da, self._af.phi_prime(self._a)) 
+    def _CalcDz(self, da): return da * self._af.phi_prime(self._a)
 
         
     
