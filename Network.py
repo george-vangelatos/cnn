@@ -23,12 +23,12 @@ class Network(): # implements network of layers; including saving and loading to
             self._last_layer = self._map_from_json[layer_type].Deserialise(layer_data, params, self._last_layer) # create next layer
             if self._first_layer is None: self._first_layer = self._last_layer # set first layer, if required
 
-    def FeedForward(self, x): # feeds batch of input vectors forward through network; returns ultimate activations
-        return self._first_layer.FeedForward(x, False)
+    def FeedForward(self, X): # feeds batch of input vectors forward through network; returns ultimate activations
+        return self._first_layer.FeedForward(X, False)
 
-    def Train(self, x, y_exp): # feeds forward batch of input vectors x; then back-propagates using expected output vectors y_exp
-        self._first_layer.FeedForward(x, True) 
-        self._last_layer.BackProp(y_exp) 
+    def Train(self, X, Y_exp): # feeds forward batch of input vectors X; then back-propagates using expected output vectors Y_exp
+        self._first_layer.FeedForward(X, True) 
+        self._last_layer.BackProp(Y_exp) 
 
     def Save(self, fn): # saves network to file fn
         network = [] # list used to store json data for each layer
