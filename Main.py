@@ -12,9 +12,9 @@ dir_work = 'C:\\Users\\georg\\Documents\\Visual Studio Code\\cnn\\working' # wor
 nn_in_fn = 'nn_in.json' # name of input network file
 nn_out_fn = 'nn_out.json' # name of output network file
 
-# load datasets; setup correct output vectors (y_values)
+# load datasets; setup correct output vectors
 ds_tr, ds_va, ds_te = Mnist.Load(os.path.join(dir_work, 'mnist'))
-y_vecs = np.identity(ds_tr.nc) # identity matrix is equivalent to the correct output vectors for the network (indexed by digit)
+y_onehot = np.identity(ds_tr.nc) # identity matrix is equivalent to the correct output vectors for the network (indexed by digit)
 
 # hyper-parameters
 params = tr_params(0.05, 0.0001, 0.25) # eta = learning rate, L2 = regularisation parameter, mu = momentum parameter
@@ -32,12 +32,12 @@ def BuildMiniBatch(ds, start, num, expand=False): # builds batch of num inputs (
     y = ds.labels[start : start + num] # get labels
     return X, y
 
-def TestNetwork(): # runs test data through network; counts number of correct outputs
+def TestNetwork(ds): # runs given dataset through network; counts number of correct outputs
     sum_correct = 0 # total number of correct outputs
-    progress = ProgressDisplay(ds_te.num, 'Testing') # progress display for testing
+    progress = ProgressDisplay(ds.num, 'Testing') # progress display for testing
     progress.DisplayPercentage(0) # display 0%
-    for start, num in Batcher(ds_te.num, test_batch_size): # batch up test cases
-        X, y_exp = BuildMiniBatch(ds_te, start, num) # build next batch of inputs
+    for start, num in Batcher(ds.num, test_batch_size): # batch up test cases
+        X, y_exp = BuildMiniBatch(ds, start, num) # build next batch of inputs
         Y_hat = network.FeedForward(X) # feed batch through the network, get output vectors for batch
         y_out = np.argmax(Y_hat, axis=1) # convert output vectors to labels
         sum_correct += sum(out == exp for (out, exp) in zip(y_out, y_exp)) # count correct outputs and add to total
@@ -46,13 +46,13 @@ def TestNetwork(): # runs test data through network; counts number of correct ou
 
 def ProcessBatch(start, num): # trains network using mini-batch of size num starting at input start
     X, y = BuildMiniBatch(ds_tr, start, num, expand_data) # build next batch of inputs
-    Y_exp = np.array([y_vecs[i,] for i in y]) # convert labels to expected output vector rows
+    Y_exp = np.array([y_onehot[i,] for i in y]) # convert labels to expected output vector rows
     network.Train(X, Y_exp) # feed batch through the network; back-propagate using expected outputs
 
 def TrainNetwork(): # train network using training dataset
     sw_total, sw_epoch = Stopwatch(), Stopwatch() # start timing total training run and first epoch
     prog = ProgressDisplay(ds_tr.num, 'Training') # progress display for training
-    best_epoch, best_correct = 0, TestNetwork() # run initial test; initialise best epoch information
+    best_epoch, best_correct = 0, TestNetwork(ds_te) # run initial test; initialise best epoch information
     prog.DisplayMessage('Start: {:.2%} ({})'.format(best_correct / ds_te.num, sw_epoch.FormatCurrentInterval())) # display initial results
 
     for epoch in range(1, total_epochs + 1): # loop through each epoch
@@ -66,7 +66,7 @@ def TrainNetwork(): # train network using training dataset
         prog.DisplayPercentage(ds_tr.num) # display 100%
 
         # test network and display result; if network has been improved, save it then update best epoch
-        num_correct = TestNetwork() # run test
+        num_correct = TestNetwork(ds_te) # run test
         prog.DisplayMessage('Epoch {}: {:.2%} ({})'.format(epoch, num_correct / ds_te.num, sw_epoch.FormatCurrentInterval()))
         if num_correct > best_correct: 
             best_epoch, best_correct = epoch, num_correct # update best epoch if improved
