@@ -1,8 +1,4 @@
-from collections import namedtuple
 import numpy as np
-
-# gradient descent parameters; eta = learning rate, L2 = L2 regularisation parameter (0 = no weight decay), mu = momentum parameter in [0, 1] (0 = none)
-tr_params = namedtuple('tr_params', 'eta L2 mu')
 
 class Weights(): # implements gradient descent for weights with L2 regularisation and momentum
     def __init__(self, shape, sigma, params):
@@ -23,7 +19,7 @@ class Weights(): # implements gradient descent for weights with L2 regularisatio
 
 class Biases(Weights): # implements gradient descent for biases with momentum
     def __init__(self, shape, params): 
-        params = params._replace(L2 = 0) # regularisation is n/a to biases
+        params = params._replace(L2=0) # regularisation is n/a to biases
         super().__init__(shape, 1, params) # call base initialiser (without any scaling)
 
     def Serialise(self): # return biases encoded as json data

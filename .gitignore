@@ -1,3 +1,6 @@
-__pycache__/*
-working/*
+# general exclusions
 .vscode/*
+*.pyc
+*.gz
+*.json
+
