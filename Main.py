@@ -35,7 +35,8 @@ def TrainNetwork(net, ds, num_epochs, params): # train network over multiple epo
         # run next epoch of training
         sw_epoch.Reset() # reset epoch stopwatch
         TrainEpoch(net, ds, params) # train network for a single epoch
-        print('Epoch {} complete ({}).'.format(epoch, sw_epoch.FormatCurrentInterval())) # report time taken to complete epoch
+        num_correct = TestNetwork(net, ds) # test network against data set
+        print('Epoch {}: {:.2%} ({})'.format(epoch, num_correct / ds.num, sw_epoch.FormatCurrentInterval())) # report progress
     print('Training over {} epoch(s) complete ({}).'.format(num_epochs, sw_total.FormatCurrentInterval())) # report total time elapsed
 
 # only execute the following if running as main module
@@ -54,9 +55,9 @@ if '__main__' == __name__:
     ds_tr, ds_va, ds_te = Mnist.Load(os.path.join(dir_work, 'Mnist\\data'))
 
     net = Network(os.path.join(os.path.join(dir_work, 'Mnist'), nn_in_fn), params) # load network from input file
-    print('Starting precision: {:.2%}'.format(TestNetwork(net, ds_te)/ds_te.num)) # report starting precision
+    print('Starting accuracy: {:.2%}'.format(TestNetwork(net, ds_te)/ds_te.num)) # report starting precision
     TrainNetwork(net, ds_tr, num_epochs, params) # train network
-    print('Ending precision: {:.2%}'.format(TestNetwork(net, ds_te)/ds_te.num)) # report ending precision
+    print('Ending accuracy: {:.2%}'.format(TestNetwork(net, ds_te)/ds_te.num)) # report ending precision
     net.Save(os.path.join(os.path.join(dir_work, 'Mnist'), nn_out_fn)) # save network to output file
 
 

@@ -58,3 +58,5 @@ class SoftmaxOutputLayer(OutputLayer): # output layer that implements log-likeli
         layer._b.Deserialise(json_data) # get bias values
         return layer
 
+    def ToText(self): # convert layer attributes to display text
+        return 'size={}'.format(self._size)

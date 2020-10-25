@@ -37,5 +37,7 @@ class FullConLayer(Layer): # fully connected layer of neurons
         layer._b.Deserialise(json_data) # get bias values
         return layer
 
+    def ToText(self): # convert layer attributes to display text
+        return 'size={}, act_func={}'.format(self._size, ActFunc.map_to_json[self._af])
 
 

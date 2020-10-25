@@ -22,6 +22,7 @@ class Layer(): # abstract class for a layer of neurons; derived classes must typ
     def Serialise(self): return None
     @staticmethod
     def Deserialise(json_data, params, prev): return None
+    def ToText(self): return None
 
     # updates weights and biases in this layer using cost derivative of (output) activations; calculates cost derivative wrt inputs
     # and passes this back through the network to adjust previous layers

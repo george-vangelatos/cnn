@@ -15,8 +15,10 @@ class Network(): # implements network of layers; including saving and loading to
     }
     _map_to_json = { val: key for (key, val) in _map_from_json.items() }
 
-    def __init__(self, fn, params): # loads network from json file fn; supplied parameters are used for any training
-        with open(fn) as f: network_data = json.load(f) # load network data into a dictionary
+    def __init__(self, json_src, params): # loads network from provided source (a filename or json string); supplied parameters are used for any training
+        if json_src[0] == '{': network_data = json.loads(json_src) # load network into a dictionary from json string, otherwise...
+        else: 
+            with open(json_src) as f: network_data = json.load(f) # load network from json file
         self._first_layer, self._last_layer = None, None # initialise first and last layer pointers
         for layer_data in network_data['network']: # loop over each layer in the file
             layer_type = layer_data['layer'] # get the type of the next layer
@@ -39,6 +41,12 @@ class Network(): # implements network of layers; including saving and loading to
             network.append(json_data) # add layer serialisation to network list
             layer = layer._next # get next layer
         with open(fn, 'w') as f: json.dump(OrderedDict([('network', network)]), f) # label network list and write it to json file
+
+    def Print(self): # print network model
+        layer = self._first_layer # start with first layer
+        while layer is not None: # loop until no more layers 
+            print('{}: {}'.format(self._map_to_json[layer.__class__], layer.ToText())) # print out layer description
+            layer = layer._next
         
 
 

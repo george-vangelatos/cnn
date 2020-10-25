@@ -21,5 +21,8 @@ class InputLayer(Layer): # input layer of neurons; must be first layer in networ
     def Deserialise(json_data, params, prev): # create input layer from json layer data
         return InputLayer(json_data['shape'])
 
+    def ToText(self): # convert layer attributes to display text
+        return 'shape={}'.format(self._shape)
+
 
 
