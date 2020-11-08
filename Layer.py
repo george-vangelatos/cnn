@@ -1,6 +1,7 @@
 import numpy as np
 
-class Layer(): # abstract class for a layer of neurons; derived classes must typically create: _w (weights), _b (biases), and _a (activations)
+# abstract class for a layer of neurons; derived classes must typically create: _w (weights), _b (biases), and _a (activations)
+class Layer(): 
     def __init__(self, shape, af, prev):
         self._af = af # store activation function
         self._shape = shape # store shape of layer
@@ -21,17 +22,17 @@ class Layer(): # abstract class for a layer of neurons; derived classes must typ
     def _CalcDerivatives(self, dz, x): return (None, None, None)
     def Serialise(self): return None
     @staticmethod
-    def Deserialise(json_data, params, prev): return None
+    def Deserialise(json_data, prev): return None
     def ToText(self): return None
 
-    # updates weights and biases in this layer using cost derivative of (output) activations; calculates cost derivative wrt inputs
-    # and passes this back through the network to adjust previous layers
-    def BackProp(self, da):
+    # updates weights and biases in this layer using cost derivative of (output) activations and provided parameters; 
+    # calculates cost derivative wrt inputs and passes this back through the network to adjust previous layers
+    def BackProp(self, da, params):
         dz = self._CalcDz(da) # calculate cost derivatives wrt to weighted inputs
         (dw, db, dx) = self._CalcDerivatives(dz, self._prev._a) # calculate other derivatives
-        self._w.GradDesc(dw) # update weights using gradient descent
-        self._b.GradDesc(db) # update biases using gradient descent
-        self._prev.BackProp(dx) # back-propagate cost derivative wrt to inputs (= activations of previous layer)
+        self._w.GradDesc(dw, params) # update weights using gradient descent
+        self._b.GradDesc(db, params) # update biases using gradient descent
+        self._prev.BackProp(dx, params) # back-propagate cost derivative wrt to inputs (= activations of previous layer)
 
     # calculates cost derivatives wrt weighted inputs given those wrt activations using current layer activations
     def _CalcDz(self, da): return da * self._af.phi_prime(self._a)

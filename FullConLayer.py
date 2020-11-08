@@ -4,10 +4,10 @@ from Weights_and_Biases import Weights, Biases
 import ActFunc
 
 class FullConLayer(Layer): # fully connected layer of neurons
-    def __init__(self, size, af, params, prev):
+    def __init__(self, size, af, prev):
         super().__init__(size, af, prev) # call base initialiser
-        self._w = Weights((prev._size, size), af.sigma(prev._size), params) # initialise weights
-        self._b = Biases((1, size), params) # initialise biases
+        self._w = Weights((prev._size, size), af.sigma(prev._size)) # initialise weights
+        self._b = Biases((1, size)) # initialise biases
 
     # feeds input x forward through the network; returns ultimate activations; flag specifies whether training or not; 
     # activations are stored if training
@@ -31,8 +31,8 @@ class FullConLayer(Layer): # fully connected layer of neurons
         return json_data
 
     @staticmethod
-    def Deserialise(json_data, params, prev): # create fully connected layer from json layer data
-        layer = FullConLayer(json_data['size'], ActFunc.map_from_json[json_data['act_func']], params, prev) # create layer
+    def Deserialise(json_data, prev): # create fully connected layer from json layer data
+        layer = FullConLayer(json_data['size'], ActFunc.map_from_json[json_data['act_func']], prev) # create layer
         layer._w.Deserialise(json_data) # get weight values
         layer._b.Deserialise(json_data) # get bias values
         return layer

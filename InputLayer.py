@@ -12,13 +12,13 @@ class InputLayer(Layer): # input layer of neurons; must be first layer in networ
         self._a = x if tr_flag else None # store input as activations if training (for subsequent back propagation)
         return self._next.FeedForward(x, tr_flag) # feed the input forward
 
-    def BackProp(self, da): pass # no back propagation at this layer
+    def BackProp(self, da, params): pass # no back propagation at this layer
 
     def Serialise(self): # convert layer to json data (ie a dict)
         return OrderedDict([('shape', self._shape)])
 
     @staticmethod
-    def Deserialise(json_data, params, prev): # create input layer from json layer data
+    def Deserialise(json_data, prev): # create input layer from json layer data
         return InputLayer(json_data['shape'])
 
     def ToText(self): # convert layer attributes to display text
