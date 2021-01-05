@@ -4,13 +4,12 @@ import numpy as np
 class Layer(): 
     def __init__(self, shape, af, prev):
         self._af = af # store activation function
-        self._shape = shape # store shape of layer
+        self._shape = tuple(shape) # store shape of layer
         self._size = int(np.prod(shape)) # store number of nodes in this layer
 
         # layer storage
         self._w = None # weights
         self._b = None # biases
-        self._a = None # activations (only used during training)
 
         # implement layer linking
         self._prev = prev # store previous layer
@@ -18,18 +17,21 @@ class Layer():
         self._next = None # no next layer yet
 
     # override these for derived classes
-    def FeedForward(self, x, tr_flag): pass
-    def _CalcDerivatives(self, dz, x): return (None, None, None)
+    def _CalcActivations(self, x, tr_flag): return None
+    def _CalcDerivatives(self, dz, x, no_dx): return (None, None, None)
     def Serialise(self): return None
     @staticmethod
     def Deserialise(json_data, prev): return None
     def ToText(self): return None
 
+    # calculates activations then feeds them forward through the network; flag specifies whether training or not
+    def FeedForward(self, x, tr_flag): return self._next.FeedForward(self._CalcActivations(x, tr_flag), tr_flag) 
+
     # updates weights and biases in this layer using cost derivative of (output) activations and provided parameters; 
     # calculates cost derivative wrt inputs and passes this back through the network to adjust previous layers
     def BackProp(self, da, params):
         dz = self._CalcDz(da) # calculate cost derivatives wrt to weighted inputs
-        (dw, db, dx) = self._CalcDerivatives(dz, self._prev._a) # calculate other derivatives
+        (dw, db, dx) = self._CalcDerivatives(dz, self._prev._a, self._prev._prev is None) # get other derivatives (except dx for 2nd layer)
         self._w.GradDesc(dw, params) # update weights using gradient descent
         self._b.GradDesc(db, params) # update biases using gradient descent
         self._prev.BackProp(dx, params) # back-propagate cost derivative wrt to inputs (= activations of previous layer)

@@ -5,11 +5,7 @@ import ActFunc
 
 class OutputLayer(FullConLayer): # output layer of neurons; must be last layer network
     def __init__(self, size, af, prev): super().__init__(size, af, prev)
-
-    def FeedForward(self, x, tr_flag): 
-        a = self._CalcActivations(x) # calculate activations
-        self._a = a if tr_flag else None # store activations if training (for subsequent back propagation)
-        return a # return activations
+    def FeedForward(self, x, tr_flag): return self._CalcActivations(x, tr_flag) # calculate and return activations
 
 class QuadOutputLayer(OutputLayer): # output layer that implements quadratic cost function: C(a) = 0.5 * (y - a)^2 
     def __init__(self, size, af, prev): super().__init__(size, af, prev)
