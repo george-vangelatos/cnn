@@ -5,7 +5,10 @@ import ActFunc
 
 class OutputLayer(FullConLayer): # output layer of neurons; must be last layer network
     def __init__(self, size, af, prev): super().__init__(size, af, prev)
-    def FeedForward(self, x, tr_flag): return self._CalcActivations(x, tr_flag) # calculate and return activations
+    def FeedForward(self, x, tr_flag): 
+        a = self._CalcActivations(x, tr_flag) # calculate activations
+        self._a = a if tr_flag else None # cache activations if training
+        return a # return activations
 
 class QuadOutputLayer(OutputLayer): # output layer that implements quadratic cost function: C(a) = 0.5 * (y - a)^2 
     def __init__(self, size, af, prev): super().__init__(size, af, prev)
@@ -55,4 +58,4 @@ class SoftmaxOutputLayer(OutputLayer): # output layer that implements log-likeli
         return layer
 
     def ToText(self): # convert layer attributes to display text
-        return 'size={}'.format(self._size)
+        return 'size={}, (params={:,})'.format(self._size, self.num_params())

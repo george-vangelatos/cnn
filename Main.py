@@ -7,7 +7,7 @@ from Stopwatch import Stopwatch
 from Network import Network
 from HyperParameters import HyperParameters
 
-def TestNetwork(net, ds, batch_size=500): # runs given dataset through network; counts number of correct outputs
+def TestNetwork(net, ds, batch_size=128): # runs given dataset through network; counts number of correct outputs
     sum_correct = 0 # total number of correct outputs
     progress = ProgressDisplay(ds.num, 'Testing') # progress display for testing
     for start, num in Batcher(ds.num, batch_size): # batch up test cases
@@ -49,33 +49,26 @@ if '__main__' == __name__:
     from projects.Mnist.Mnist import Mnist
     ds_tr, ds_va, ds_te = Mnist.Load(os.path.join(dir_work, 'Mnist\\data'))
 
-    # load network from input file
-    #net = Network(json_fn=os.path.join(os.path.join(dir_work, 'Mnist'), nn_in_fn)) 
-    #print('Starting accuracy: {:.2%}'.format(TestNetwork(net, ds_te)/ds_te.num)) # report starting accuracy
+    net = Network(json_fn=os.path.join(os.path.join(dir_work, 'Mnist'), nn_in_fn)) # load network from input file
 
     # create new network from json
     net_str = ('{ "network": [ '
         '{ "layer": "input", "shape": [28,28,1] }, '
         '{ "layer": "conv", "f_shape": [5,5], "depth": 8, "act_func": "leaky_relu" }, '
-        '{ "layer": "conv", "f_shape": [5,5], "depth": 12, "act_func": "leaky_relu" }, '
+#        '{ "layer": "conv", "f_shape": [5,5], "depth": 12, "act_func": "leaky_relu" }, '
 #        '{ "layer": "full_con", "size": 200, "act_func": "leaky_relu" }, '
         '{ "layer": "full_con", "size": 100, "act_func": "leaky_relu" }, '
         '{ "layer": "softmax_output", "size": 10 } '
         '] }')
-    net = Network(json_str=net_str)
-    net.Print() # print network model
-
-   
-    # time test
-#    sw = Stopwatch()
-#    TestNetwork(net, ds_te, 500)
-#    print('time={}             '.format(sw.FormatCurrentInterval())) 
+    #net = Network(json_str=net_str)
+    
+    net.Print() # print the network configuration
+    print('Starting accuracy: {:.2%}'.format(TestNetwork(net, ds_te)/ds_te.num)) # report starting accuracy
 
     # train network
     params = HyperParameters(eta=0.05, L2=0.0001, mu=0.25, batch_size=11) # set hyper-parameters
-    TrainNetwork(net, ds_tr, params, num_epochs=10) 
+    TrainNetwork(net, ds_tr, params, num_epochs=1) 
     print('Ending accuracy: {:.2%}'.format(TestNetwork(net, ds_te)/ds_te.num)) # report ending accuracy
 
     net.Save(os.path.join(os.path.join(dir_work, 'Mnist'), nn_out_fn)) # save network to output file
-
 

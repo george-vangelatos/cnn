@@ -9,10 +9,8 @@ class FullConLayer(Layer): # fully connected layer of neurons
         self._w = Weights((prev._size, size), af.sigma(prev._size)) # initialise weights
         self._b = Biases((1, size)) # initialise biases
 
-    def _CalcActivations(self, x, tr_flag): # calculate activations; tr_flag specifies whether training or not
-        a = self._af.phi(x @ self._w.values + self._b.values) # calculate activations from input x
-        self._a = a if tr_flag else None # cache activations if training (for subsequent back propagation)
-        return a
+    # calculate activations from input x
+    def _CalcActivations(self, x, tr_flag): return self._af.phi(x @ self._w.values + self._b.values) 
 
     def _CalcDerivatives(self, dz, x, no_dx=False): # performs derivative calculations for fully connected layer
         dw = (x.transpose() @ dz) / x.shape[0] # calculate cost derivatives wrt to weights (average over mini-batch)
@@ -34,6 +32,6 @@ class FullConLayer(Layer): # fully connected layer of neurons
         return layer
 
     def ToText(self): # convert layer attributes to display text
-        return 'size={}, act_func={}'.format(self._size, ActFunc.map_to_json[self._af])
+        return 'size={}, act_func={} (params={:,})'.format(self._size, ActFunc.map_to_json[self._af], self.num_params())
 
 

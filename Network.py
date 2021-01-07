@@ -47,9 +47,12 @@ class Network(): # implements network of layers; including saving and loading to
 
     def Print(self): # print network model
         layer = self._first_layer # start with first layer
+        num_params = 0 # counts number of trainable parameters
         while layer is not None: # loop until no more layers 
             print('{}: {}'.format(self._map_to_json[layer.__class__], layer.ToText())) # print out layer description
+            num_params += layer.num_params() # add number of parameters in layer
             layer = layer._next
+        print('(total params={:,})'.format(num_params))
         
 
 

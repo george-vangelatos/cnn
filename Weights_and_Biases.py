@@ -16,6 +16,8 @@ class Weights(): # implements gradient descent for weights with L2 regularisatio
     def Deserialise(self, json_data): # initialise weight values from json data, if it is present
         if 'weights' in json_data: self.values = np.reshape(np.array(json_data['weights']), self._vel.shape)
 
+    def num_params(self): return np.prod(self.values.shape) # return the total number of weights
+
 class Biases(Weights): # implements gradient descent for biases with momentum
     def __init__(self, shape): super().__init__(shape, 1) # call base initialiser (without any scaling)
 

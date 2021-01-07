@@ -1,3 +1,5 @@
+import sys
+
 class ProgressDisplay(): # displays % progress to console 
     lots_of_spaces = " " * 40
 
@@ -11,8 +13,13 @@ class ProgressDisplay(): # displays % progress to console
     def DisplayPercentage(self, units): # display percentage of units completed so far
         percent = round((units * 100) / self._size) # calculate percentage to display
         if percent == self._last_percent: return # quit now if already displaying this percentage
-        if self._job_name is None: print(f'\r{percent}%{ProgressDisplay.lots_of_spaces}', end='\r')
-        else: print(f'\r{self._job_name}: {percent}%{ProgressDisplay.lots_of_spaces}', end='\r')
+        if self._job_name is None: 
+            print(f'\r{percent}%{ProgressDisplay.lots_of_spaces}', end='\r')
+        else: 
+            print(f'\r{self._job_name}: {percent}%{ProgressDisplay.lots_of_spaces}', end='\r')
+        sys.stdout.flush()
         self._last_percent = percent
 
-    def DisplayMessage(self, msg): print(f'{msg}{ProgressDisplay.lots_of_spaces}') # display a line of text
+    def DisplayMessage(self, msg): 
+        print(f'{msg}{ProgressDisplay.lots_of_spaces}') # display a line of text
+        sys.stdout.flush()

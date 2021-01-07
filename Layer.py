@@ -25,7 +25,10 @@ class Layer():
     def ToText(self): return None
 
     # calculates activations then feeds them forward through the network; flag specifies whether training or not
-    def FeedForward(self, x, tr_flag): return self._next.FeedForward(self._CalcActivations(x, tr_flag), tr_flag) 
+    def FeedForward(self, x, tr_flag): 
+        a = self._CalcActivations(x, tr_flag) # calculate activations
+        self._a = a if tr_flag else None # cache activations if training
+        return self._next.FeedForward(a, tr_flag) # feed activations forward, return ultimate output
 
     # updates weights and biases in this layer using cost derivative of (output) activations and provided parameters; 
     # calculates cost derivative wrt inputs and passes this back through the network to adjust previous layers
@@ -38,6 +41,12 @@ class Layer():
 
     # calculates cost derivatives wrt weighted inputs given those wrt activations using current layer activations
     def _CalcDz(self, da): return da * self._af.phi_prime(self._a)
+
+    # calculates the number of trainable parameters in this layer
+    def num_params(self): 
+        nw = 0 if self._w is None else self._w.num_params()
+        nb = 0 if self._b is None else self._b.num_params() 
+        return nw + nb
 
         
     
