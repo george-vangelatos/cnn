@@ -1,33 +1,33 @@
 import sys
 import os
 import numpy as np
+from tqdm_fix import tqdm_fix as tqdm
 from Batcher import Batcher
-from ProgressDisplay import ProgressDisplay
 from Stopwatch import Stopwatch
 from Network import Network
 from HyperParameters import HyperParameters
 
 def TestNetwork(net, ds, batch_size=128): # runs given dataset through network; counts number of correct outputs
     sum_correct = 0 # total number of correct outputs
-    progress = ProgressDisplay(ds.num, 'Testing') # progress display for testing
+    pbar = tqdm(desc='Testing', total=ds.num, leave=False, ascii=True) # setup progress bar
     for start, num in Batcher(ds.num, batch_size): # batch up test cases
-        progress.DisplayPercentage(start) # display progress percentage
         X, y_exp = ds.BuildMiniBatch(start, num) # build next batch of inputs
         Y_hat = net.FeedForward(X) # feed batch through the network, get output vectors for batch
         y_out = np.argmax(Y_hat, axis=1) # convert output vectors to labels
         sum_correct += sum(out == exp for (out, exp) in zip(y_out, y_exp)) # count correct outputs and add to total
-    progress.DisplayPercentage(ds.num) # display 100%
+        pbar.update(num) # update progress bar
+    pbar.close() # close progress bar
     return sum_correct
 
 def TrainEpoch(net, ds, params): # train network over a single epoch using provided dataset
-    prog = ProgressDisplay(ds.num, 'Training') # initialise progress display
+    pbar = tqdm(desc='Training', total=ds.num, leave=False, ascii=True) # setup progress bar
     ds.Shuffle() # shuffle training data
     for start, num in Batcher(ds.num, params.batch_size): # loop over mini-batches
-        prog.DisplayPercentage(start) # display progress percentage            
         X, y = ds.BuildMiniBatch(start, num, params.expand_data) # build next batch of inputs
         Y_exp = ds.OneHotEncoding(y) # encode labels into one-hot vector rows
         net.Train(X, Y_exp, params) # feed batch through the network; back-propagate using expected outputs
-    prog.DisplayPercentage(ds.num) # display 100%
+        pbar.update(num) # update progress bar
+    pbar.close() # close progress bar
 
 def TrainNetwork(net, ds, params, num_epochs): # train network over multiple epochs using provided dataset
     sw_total, sw_epoch = Stopwatch(), Stopwatch() # start timing total training run and first epoch
