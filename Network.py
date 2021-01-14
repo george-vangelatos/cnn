@@ -1,7 +1,8 @@
 from collections import OrderedDict
 import json
 import InputLayer
-import Conv2DLayer
+import ConvLayer
+import MaxPoolLayer
 import FullConLayer
 import OutputLayer
 
@@ -9,7 +10,8 @@ class Network(): # implements network of layers; including saving and loading to
     # map between json labels and corresponding layer classes
     _map_from_json = {
         'input': InputLayer.InputLayer, 
-        'conv': Conv2DLayer.Conv2DLayer,
+        'conv': ConvLayer.ConvLayer,
+        'maxpool': MaxPoolLayer.MaxPoolLayer,
         'full_con': FullConLayer.FullConLayer,
         'quad_output': OutputLayer.QuadOutputLayer,
         'xent_output': OutputLayer.XentOutputLayer,

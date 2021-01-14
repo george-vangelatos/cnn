@@ -5,17 +5,17 @@ from Layer import Layer
 from Weights_and_Biases import Weights, Biases
 import ActFunc
 
-class Conv2DLayer(Layer): # 2D convolutional layer of neurons
+class ConvLayer(Layer): # 2D convolutional layer of neurons
     def __init__(self, f_shape, depth, af, prev):
         self._f_shape = tuple(f_shape) # store (2D) filter shape 
-        shape = Conv2DLayer._conv_shape(prev._shape[:-1], self._f_shape) + (depth,) # calculate shape of this layer
+        shape = ConvLayer._conv_shape(prev._shape[:-1], self._f_shape) + (depth,) # calculate shape of this layer
         super().__init__(shape, af, prev) # call base initialiser
         self._w = Weights((prev._shape[-1], np.prod(f_shape), depth), af.sigma(prev._size)) # initialise weights
         self._b = Biases(depth) # initialise biases
 
         # build indexes for faster forward and backward passes
-        self._i2cidx_fwd = Conv2DLayer._build_i2c_idx(prev._shape[:-1], self._f_shape)
-        self._i2cidx_bck = Conv2DLayer._build_i2c_idx(np.add(prev._shape[:-1], self._f_shape) - (1,), self._f_shape)
+        self._i2cidx_fwd = ConvLayer._build_i2c_idx(prev._shape[:-1], self._f_shape)
+        self._i2cidx_bck = ConvLayer._build_i2c_idx(np.add(prev._shape[:-1], self._f_shape) - (1,), self._f_shape)
 
     def _CalcActivations(self, x, tr_flag): # calculate activations; tr_flag specifies whether training or not
         # transform all input images in mini-batch into columns in preparation for convolution (im2col)
@@ -56,7 +56,7 @@ class Conv2DLayer(Layer): # 2D convolutional layer of neurons
 
     # builds an im2col index which takes a flattened input image to its im2col representation
     @staticmethod
-    def _build_i2c_idx(in_shape, f_shape): return Conv2DLayer._im2col(np.arange(np.prod(in_shape)).reshape(in_shape), f_shape)
+    def _build_i2c_idx(in_shape, f_shape): return ConvLayer._im2col(np.arange(np.prod(in_shape)).reshape(in_shape), f_shape)
 
     # returns the windows in x got by applying filter of given shape; each window is flattened into a row
     @staticmethod
@@ -73,7 +73,7 @@ class Conv2DLayer(Layer): # 2D convolutional layer of neurons
 
     @staticmethod
     def Deserialise(json_data, prev): # create fully connected layer from json layer data
-        layer = Conv2DLayer(json_data['f_shape'], json_data['depth'], ActFunc.map_from_json[json_data['act_func']], prev) # create layer
+        layer = ConvLayer(json_data['f_shape'], json_data['depth'], ActFunc.map_from_json[json_data['act_func']], prev) # create layer
         layer._w.Deserialise(json_data) # get weight values
         layer._b.Deserialise(json_data) # get bias values
         return layer
