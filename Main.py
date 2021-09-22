@@ -1,7 +1,8 @@
 import sys
 import os
 import numpy as np
-from tqdm_fix import tqdm_fix as tqdm
+from tqdm import tqdm
+#from tqdm_fix import tqdm_fix as tqdm
 from Batcher import Batcher
 from Stopwatch import Stopwatch
 from Network import Network

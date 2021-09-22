@@ -13,7 +13,7 @@ class Layer():
 
         # implement layer linking
         self._prev = prev # store previous layer
-        if prev is not None: prev._next = self # if there is a previous layer, make it point to this layer
+        if prev != None: prev._next = self # if there is a previous layer, make it point to this layer
         self._next = None # no next layer yet
 
     # override these for derived classes
@@ -34,7 +34,7 @@ class Layer():
     # calculates cost derivative wrt inputs and passes this back through the network to adjust previous layers
     def BackProp(self, da, params):
         dz = self._CalcDz(da) # calculate cost derivatives wrt to weighted inputs
-        (dw, db, dx) = self._CalcDerivatives(dz, self._prev._a, self._prev._prev is None) # get other derivatives (except dx for 2nd layer)
+        (dw, db, dx) = self._CalcDerivatives(dz, self._prev._a, self._prev._prev == None) # get other derivatives (except dx for 2nd layer)
         self._w.GradDesc(dw, params) # update weights using gradient descent
         self._b.GradDesc(db, params) # update biases using gradient descent
         self._prev.BackProp(dx, params) # back-propagate cost derivative wrt to inputs (= activations of previous layer)
@@ -44,8 +44,8 @@ class Layer():
 
     # calculates the number of trainable parameters in this layer
     def num_params(self): 
-        nw = 0 if self._w is None else self._w.num_params()
-        nb = 0 if self._b is None else self._b.num_params() 
+        nw = 0 if self._w == None else self._w.num_params()
+        nb = 0 if self._b == None else self._b.num_params() 
         return nw + nb
 
         
